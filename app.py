@@ -7,7 +7,8 @@ ui.add_head_html(no_scroll)
 ui.add_head_html(farsi_rtl)
 
 def add_new_cat(e):
-    add_cat(e)
+    typ = 'income' if new_typ.value=='دخل' else 'expense'
+    add_cat(e,typ=typ)
     ui.notify('دسته بندی اضافه شد')
     dialog.close()
     cats.refresh()
@@ -32,7 +33,7 @@ def submit_income_or_expense():
 with ui.row().classes('w-full'):
     with ui.column().style('flex:1;border:solid 1px;'):
         with ui.row().classes('w-full p-2 m-2'):
-            ie_title = ui.input('توضیحات').props('dense')
+            ie_title = ui.input('توضیحات').props('dense outlined').classes('p-2 m-2')
             ie_amount = ui.input('مقدار به تومان').props('dense')
             ie_type = ui.radio(['دخل','خرج'], value='خرج').props('dense')
         with ui.row().classes('w-full p-2'):
@@ -41,22 +42,23 @@ with ui.row().classes('w-full'):
             def cats():
                 global ie_cat
                 if ie_type.value == 'دخل':
-                    all_cat = [k for k,v in get_cat().items() if v=='income']
+                    all_cat = [item[0] for item in get_cat() if item[-1]=='income']
                 else:
-                    all_cat = [k for k,v in get_cat().items() if v=='expense']
-                print(get_cat())
+                    all_cat = [item[0] for item in get_cat() if item[-1]=='expense']
                 ie_cat = ui.select(options=all_cat, value=all_cat[-1]).props('dense').style('flex:4;')
             cats()
+            ie_type.on_value_change(lambda e: cats.refresh())
             with ui.dialog().props('backdrop-filter="blur(8px) brightness(20%)"') as dialog, ui.card():
-                ui.label('اضافه کردن دسته بندی')
-                new_cat = ui.input('دسته بندی:')
+                with ui.row():
+                    new_cat = ui.input('دسته بندی جدید:').props('dense')
+                    new_typ = ui.radio(['دخل','خرج'], value='دخل').props('dense')
                 with ui.row():
                     ui.button(icon='add',on_click=lambda e:add_new_cat(new_cat.value))
                     ui.button(icon='close', on_click=dialog.close)
 
             ui.button(icon='add', on_click=dialog.open).props('unelevated').style('flex:0.5;')
         with ui.row().classes('w-full p-2'):
-            with ui.input('تاریخ').classes('w-full') as date:
+            with ui.input('تاریخ',placeholder='برای امروز خالی بگذارید').classes('w-full') as date:
                 with ui.menu().props('no-parent-event') as menu:
                     with ui.date().bind_value(date):
                         with ui.row().classes('justify-end'):
