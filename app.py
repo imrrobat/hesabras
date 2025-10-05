@@ -5,6 +5,8 @@ import datetime
 
 ui.add_head_html(no_scroll)
 ui.add_head_html(farsi_rtl)
+ui.dark_mode(True)
+
 
 def add_new_cat(e):
     typ = 'income' if new_typ.value=='دخل' else 'expense'
@@ -31,11 +33,17 @@ def submit_income_or_expense():
         print('expense')
 
 with ui.row().classes('w-full'):
-    with ui.column().style('flex:1;border:solid 1px;'):
+    with ui.column().classes('items-center justify-center').style('flex:1;border:solid 1px; '):
         with ui.row().classes('w-full p-2 m-2'):
-            ie_title = ui.input('توضیحات').props('dense outlined').classes('p-2 m-2')
-            ie_amount = ui.input('مقدار به تومان').props('dense')
-            ie_type = ui.radio(['دخل','خرج'], value='خرج').props('dense')
+            ie_title = ui.input('توضیحات')\
+                .props('dense outlined color=green-3')\
+                .classes('w-full')
+                
+            ie_amount = ui.input('مقدار به تومان')\
+                .props('dense color=green-3')
+                
+            ie_type = ui.radio(['دخل','خرج'], value='خرج')\
+                .props('dense color=green-3')
         with ui.row().classes('w-full p-2'):
             ie_cat = None
             @ui.refreshable
@@ -45,18 +53,18 @@ with ui.row().classes('w-full'):
                     all_cat = [item[0] for item in get_cat() if item[-1]=='income']
                 else:
                     all_cat = [item[0] for item in get_cat() if item[-1]=='expense']
-                ie_cat = ui.select(options=all_cat, value=all_cat[-1]).props('dense').style('flex:4;')
+                ie_cat = ui.select(options=all_cat, value=all_cat[-1]).props('dense color=green-3').style('flex:4;')
             cats()
             ie_type.on_value_change(lambda e: cats.refresh())
             with ui.dialog().props('backdrop-filter="blur(8px) brightness(20%)"') as dialog, ui.card():
                 with ui.row():
-                    new_cat = ui.input('دسته بندی جدید:').props('dense')
-                    new_typ = ui.radio(['دخل','خرج'], value='دخل').props('dense')
+                    new_cat = ui.input('دسته بندی جدید:').props('dense').props('color=green-3')
+                    new_typ = ui.radio(['دخل','خرج'], value='دخل').props('dense').props('color=green-3')
                 with ui.row():
-                    ui.button(icon='add',on_click=lambda e:add_new_cat(new_cat.value))
-                    ui.button(icon='close', on_click=dialog.close)
+                    ui.button(icon='add',on_click=lambda e:add_new_cat(new_cat.value)).props('color=green-3')
+                    ui.button(icon='close', on_click=dialog.close).props('color=green-3')
 
-            ui.button(icon='add', on_click=dialog.open).props('unelevated').style('flex:0.5;')
+            ui.button(icon='add', on_click=dialog.open).props('unelevated').style('flex:0.5;').props('color=green-3')
         with ui.row().classes('w-full p-2'):
             with ui.input('تاریخ',placeholder='برای امروز خالی بگذارید').classes('w-full') as date:
                 with ui.menu().props('no-parent-event') as menu:
@@ -65,7 +73,7 @@ with ui.row().classes('w-full'):
                             ui.button('Close', on_click=menu.close).props('flat')
                 with date.add_slot('append'):
                     ui.icon('edit_calendar').on('click', menu.open).classes('cursor-pointer')
-        ui.button('ثبت', on_click=submit_income_or_expense).classes('w-full p-2')
+        ui.button('ثبت', on_click=submit_income_or_expense).classes('w-full p-2').props('color=green-3')
                     
     with ui.column().style('flex:4;border:solid 1px;'):
         with ui.scroll_area():
