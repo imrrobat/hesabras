@@ -26,10 +26,46 @@ def add_cat(category, typ, filename="cat.csv"):
         writer = csv.writer(f)
         writer.writerow([category, typ])
 
-def add_income(title, amount, income_date, category, filename="income.csv"):
+def add_data(title, amount, in_date, category,type,filename="data.csv"):
     file_exists = os.path.exists(filename)
     with open(filename, "a", encoding="utf-8", newline='') as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(["title", "amount", "date", "category"])
-        writer.writerow([title, amount, income_date, category])
+            writer.writerow(["title", "amount", "date", "category","type"])
+        writer.writerow([title, amount, in_date, category,type])
+
+def read_data(filename="data.csv"):
+    result = []
+
+    # بررسی می‌کنیم فایل وجود داره یا نه
+    if not os.path.exists(filename):
+        with open(filename, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            # فقط هدر رو می‌نویسیم
+            writer.writerow(["title", "amount", "date", "category", "type"])
+
+    # خوندن داده‌ها
+    with open(filename, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if not row['amount']:  # اگر فایل خالی بود یا فقط هدر داشت
+                continue
+            amount = int(row['amount'].replace(',', ''))
+            item = {
+                'title': row['title'],
+                'type': row['type'],
+                'amount': f'{amount:,}',
+                'date': row['date'],
+                'category': row['category']
+            }
+            result.append(item)
+    return result
+
+def aggregate_data(data, t_type):
+    agg = {}
+    for item in data:
+        if item['type'] == t_type:
+            amount = int(item['amount'].replace(',', ''))
+            category = item['category']
+            agg[category] = agg.get(category, 0) + amount
+    return agg
