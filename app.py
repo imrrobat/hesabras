@@ -49,7 +49,7 @@ with ui.row().classes('w-full'):
         with ui.row().classes('w-full p-2 m-2'):
               
             ie_amount = ui.input('مقدار به تومان')\
-                .props('dense color=deep-purple mask="#,###,###,###" reverse-fill-mask input-class="text-left" required')
+                .props('dense color=deep-purple mask="#,###,###,###" reverse-fill-mask input-class="text-left"')
                 
             ie_type = ui.radio(['درآمد','خرج'], value='خرج')\
                 .props('dense color=deep-purple')

@@ -1,2 +1,4 @@
 cat.csv
 data.csv 
+__pycache__/
+*.pyc
